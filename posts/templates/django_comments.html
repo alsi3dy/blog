@@ -1,0 +1,34 @@
+{% load comments %}
+
+
+
+
+{% get_comment_list for instance as comments %}
+
+		{% for comment in comments %}
+	<div class="alert alert-info" role="alert">{{comment.user_name}} said: {{comment.comment|linebreaks}}</div>
+
+		{% endfor %}
+
+		
+		{% get_comment_form for instance as form %}
+		{% if request.user.is_authenticated	%}
+		<form action="{% comment_form_target %}"method="POST">
+		{% csrf_token %}
+		
+			<input type="hidden" name="name" value"{{request.user.username}}">
+			<input type="hidden" name="email" value"{{request.user.email}}">
+			<textarea type="text" class="form-control input-lg "name="comment"> </textarea>
+			{{form.content_type}}
+			{{form.object_pk}}
+			{{form.timestamp}}
+			{{form.security_hash}}
+			<br>
+			<input type="hidden" name="next" value="{{instance.get_absolute_url}}">
+			<input type="submit" name="submit" class= "btn btn-primary">	
+
+		</form>
+		{% else %}
+		<a href= "{% url 'posts:login' %}"> Please click this link to log in order to comment.</a>
+		{% endif %}
+

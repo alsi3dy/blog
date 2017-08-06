@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load urllify %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Detail{% endblock head_title %}
+
+{% block content %}
+	<div class="col-sm-6 col-sm-offset-3">
+
+		<div class="thumbnail">
+		{% if instance.image %}
+      <img src="{{instance.image.url}}" class="img-responsive">
+      {% endif %}
+      <div class="caption">
+        <h3>{{instance.title}}<small>{{instance.publish|timesince}} ago </small></h3>
+        <p>{{instance.content |linebreaks|truncatechars:10}}</p>
+
+        Author: {{instance.author.username}}
+        <p>
+	        
+	        <a href="{% url 'posts:update' slug=instance.slug %}" class="btn btn-success">Update</a>
+	        <a href="{% url 'posts:delete' slug=instance.slug %}" class="btn btn-danger">Delete</a>
+        </p>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{request.build_absolute_uri}}">
+		Share on Facebook
+		</a>
+
+		<a href="https://twitter.com/home?status={{instance.content|urllify|truncatechars:50}}%20{{request.build_absolute_uri}}">
+		Share on Twitter
+
+		</a>
+
+		<a href="https://www.linkedin.com/shareArticle?mini=true&url={{request.build_absolute_uri}}&title={{instance.title|urllify}}&summary={{instance.content.urllifyfy}}&
+		source={{request.build_absolute_uri}}"> 
+		Share on Linkedin
+	</a>
+        </div>
+        <div class="fb-like" data-href={{request.build_absolute_uri}} data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+     <div class="fb-comments" data-href="{{request.build_absolute_uri}}" data-numposts="5"></div>
+
+		<!--<button class="btn" onclick="ajax_like()">
+		<span id="likes_count">{{like_count}}</span>
+		<span id = "heart" class="glyphicon glyphicon-heart {% if liked %}text-danger{% endif %}" aria-hidden="true" ></span>
+		</button>
+
+        {% include "django_comments.html" %} -->
+
+		
+      </div>
+    </div>
+  
+<br>
+	
+
+	<a href="{% url 'posts:list' %}">Go back to list</a>
+
+	<script> 
+	function ajax_like()
+	{
+	console.log("Like/Unlike clicked!");
+	$.ajax({
+		type: 'GET',
+		
+		url: "{% url 'posts:like_button' post_id=instance.id %}",
+		
+		error: function(){
+		console.log("I laugh the laugh of an axe-wielding madman.");}		
+		,
+		
+		success: function(data){
+
+			$("#likes_count").text(data.like_count)
+
+			if(data.action==="like"){
+				$("#heart").addClass("text-danger")
+
+			}
+			else{
+			$("#heart").removeClass("text-danger")	
+
+			}
+			
+		} ,
+
+	})
+
+	}
+	</script>
+{% endblock content %}
+

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Update{% endblock head_title %}
+
+{% block content %}
+<div class="row">
+	<div class="col-sm-6 col-sm-offset-3">
+	<form method="POST" action="{% url 'posts:update' slug=post_object.slug %}" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{form|crispy}}
+		<input type="submit" value="Update Post">
+	</form>
+	</div>
+	</div>
+	{# <a href="{% url 'posts:detail' post_id=iter.id %}" class="btn btn-success">Update</a> #}
+{% endblock content %}

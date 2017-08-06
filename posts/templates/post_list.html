@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+
+{% block head_title %}List{% endblock head_title %}
+
+{% block content %}
+
+<div class = "row">
+<form action="{% url 'posts:list' %}" method="GET">
+  <input type="text" name="q" placeholder="Search posts here" value="{{request.GET.q}}">
+  <input type="submit" value="Search">
+
+  <input type="reset"value="Clear"> 
+  </form>
+  <br>
+{% for iter in post_list %}
+	<div class = "col-sm-6">
+
+		<div class="thumbnail">
+		{% if iter.image %}
+      <img src="{{iter.image.url}}" class="img-responsive">
+      {% endif %}
+      <div class="caption">
+        <h3>{{iter.title}}<small>{{iter.publish|timesince}} ago </small></h3>
+        {% if iter.draft %} <h4>Draft</h4> {% endif %}
+        {% if iter.draft > today %} <h4>Draft</h4> {% endif %}
+        <p>{{iter.content |linebreaks|truncatechars:10}}</p>
+        <p>
+        <a href="{% url 'posts:detail' slug=iter.slug %}" class="btn btn-primary">View</a>
+        {%if request.user.is_superuser or request.user.is_staff %}
+	        
+	        <a href="{% url 'posts:update' slug=iter.slug %}" class="btn btn-success">Update</a>
+	        <a href="{% url 'posts:delete' slug=iter.slug %}" class="btn btn-danger">Delete</a>
+          {% endif %} 
+        </p>
+        </div>
+      </div>
+    </div>
+  
+
+
+	
+{% endfor %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if post_list.has_previous %}
+            <a href="?page={{ post_list.previous_page_number }}&q={{request.GET.q}}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ post_list.number }} of {{ post_list.paginator.num_pages }}.
+
+        </span>
+
+
+
+        {% if post_list.has_next %}
+            <a href="?page={{ post_list.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+<p>
+	<a href="{% url 'posts:create' %}" class="btn btn-primary">Create New Post?</a>
+</p>
+
+</div>
+
+
+{% endblock content %}
+
+
+{#{{x.get_absolute_url}}#}
+
+
+    {#<div class="thumbnail">
+      <img src="..." alt="...">
+      <div class="caption">
+        <h3>Thumbnail label</h3>
+        <p>...</p>
+        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="{{x.get_absolute_url}}"><li>{{x.title}}</li></a> #}
